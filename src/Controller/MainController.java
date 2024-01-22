@@ -1,8 +1,15 @@
 package Controller;
 
 import Dao.FileReader;
+import Exceptions.UserStateException;
+import Model.Intention;
 import Model.UserStates.*;
 import View.ConsoleView;
+
+import java.util.Objects;
+import java.util.Scanner;
+
+import static java.lang.System.exit;
 
 public class MainController {
 
@@ -52,21 +59,57 @@ public class MainController {
         return mainMenuUserState;
     }
 
+    /*
+    TODO: use observer design pattern between states and controller. when the state changes
+    let the controller know then use the appropriate function of ConsoleView
+     */
     public void start()
     {
+        Intention currentIntention = null;
+        String input = null;
         while(true)
         {
-            
+            if (currentUserState.equals(greetingUserState))
+            {
+                if(Objects.equals(input, "hello"))
+                {
+                    try{ currentUserState.mainMenu(); } catch( UserStateException ignored ) {}
+                    continue;
+                }
+                view.showGreeting();
+            }
+            else if (currentUserState.equals(mainMenuUserState))
+            {
+                view.showMainMenu();
+            }
+            else if(currentUserState.equals(intentionInspectingUserState))
+            {
+                if(currentIntention == null)
+                {
+                    System.err.println("Error at showScreen(Intention) in MainController.java: Given intention is null.");
+                    continue;
+                }
+                view.showExistingIntention(currentIntention);
+            }
+            else if(currentUserState.equals(intentionEditingUserState))
+            {
+                view.showIntentionCreation();
+                intentionCreation();
+            }
+            else if(currentUserState.equals(goodbyeUserState))
+            {
+                view.showGoodbye();
+                exit(0);
+            }
+
+            Scanner myObj = new Scanner(System.in);
+            input = myObj.nextLine();
         }
     }
 
-    private void getInput()
+    private void intentionCreation()
     {
 
     }
 
-    private void processInput()
-    {
-
-    }
 }

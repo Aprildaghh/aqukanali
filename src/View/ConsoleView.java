@@ -55,7 +55,7 @@ public class ConsoleView {
     public void showGreeting()
     {
         String str = "Welcome to AQUKANALI, the todo app\n" +
-                "press any button to continue...";
+                "say hello to continue...";
 
         slowPrint(str);
     }
