@@ -2,7 +2,9 @@ package View;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import Exception.NullIntentionException;
+import Exceptions.NullIntentionException;
+import Model.Intention;
+
 public class ConsoleView {
 
     private static ConsoleView uniqueInstance;
@@ -45,6 +47,8 @@ public class ConsoleView {
             str += (i+1) + ". " + ((intentionMarkList.get(i) ? "(DONE) " : "(NOT COMPLETED) ")) + intentionList.get(i) + "\n";
         }
 
+        str += "\nType 'e' for edit, 'm' for returning to main menu.\n";
+
         slowPrint(str);
     }
 
@@ -70,7 +74,8 @@ public class ConsoleView {
         String str = """
                 What would you want today?
                 1. Show today's plan, if there's not create one.
-                2. Show a specific day's plan.""";
+                2. Show a specific day's plan.
+                3. Exit.""";
 
         slowPrint(str);
     }

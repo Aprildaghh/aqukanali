@@ -1,7 +1,7 @@
 package Model;
 
-import Exception.EmptyIntentionStringException;
-import Exception.NullIntentionException;
+import Exceptions.EmptyIntentionStringException;
+import Exceptions.NullIntentionException;
 
 import java.util.ArrayList;
 import java.util.Date;
