@@ -3,7 +3,7 @@ package Dao;
 import Model.Intention;
 
 import java.sql.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class FileReader {
 
@@ -32,7 +32,7 @@ public class FileReader {
         return uniqueInstance;
     }
 
-    public void addIntention() throws SQLException {
+    public void addIntention(Intention intention) throws SQLException {
         String sql = "";
         Statement stmt = null;
         ResultSet rs = null;
@@ -40,7 +40,7 @@ public class FileReader {
         rs = stmt.executeQuery(sql);
     }
 
-    public Intention getIntentionByDate(Date date) throws SQLException {
+    public Intention getIntentionByDate(LocalDate date) throws SQLException {
         Intention intention = null;
         String sql = "";
         Statement stmt = null;
@@ -55,6 +55,13 @@ public class FileReader {
         return intention;
     }
 
+    public void updateIntention(Intention intention) throws SQLException {
+        String sql = "";
+        Statement stmt = null;
+        ResultSet rs = null;
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(sql);
+    }
     /*
 
             if(rs.next())

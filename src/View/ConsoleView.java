@@ -52,6 +52,12 @@ public class ConsoleView {
         slowPrint(str);
     }
 
+    public void showSpecificDateAsking()
+    {
+        String str = "Enter the date(dd,mm,yyyy):";
+        slowPrint(str);
+    }
+
     public void showGreeting()
     {
         String str = "Welcome to AQUKANALI, the todo app\n" +
@@ -82,7 +88,45 @@ public class ConsoleView {
 
     public void showIntentionCreation()
     {
-        String str = "Enter your intentions for today(put '&' between intentions):";
+        String str = """
+                Enter your intentions for today
+                For help type 'help'
+                """;
+        slowPrint(str);
+    }
+
+    public void showIntentionCreationHelp()
+    {
+        String str = """
+                Enter your intentions one by one.
+                Press enter to add new intention.
+                For exiting creation simply type 'exit'.
+                """;
+        slowPrint(str);
+    }
+
+    public void showIntentionEditing()
+    {
+        String str = """
+                Editing Intention...
+                For help type 'help'
+                """;
+        slowPrint(str);
+    }
+
+    public void showIntentionEditingHelp()
+    {
+        String str = """
+                Simply first type the intention number you want to change then rewrite the intention if you want.
+                If you want to simply mark the intention as completed just type DONE after the intention number.
+                If you want to create new intention start your intention with the next numerical intention number value.
+                For exiting editing simply type 'exit'.
+                Ex:
+                    1. DONE
+                    2. Changed Intention
+                    3. New Intention
+                    exit
+                """;
         slowPrint(str);
     }
 

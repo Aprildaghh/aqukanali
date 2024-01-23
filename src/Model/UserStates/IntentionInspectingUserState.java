@@ -3,12 +3,13 @@ package Model.UserStates;
 import Controller.MainController;
 import Exceptions.UserStateException;
 
-public class IntentionInspectingUserState implements UserState{
+public class IntentionInspectingUserState extends UserStateSubject implements UserState{
 
     private final MainController controller;
 
     public IntentionInspectingUserState(MainController mc)
     {
+        super(mc);
         controller = mc;
     }
 
@@ -25,10 +26,20 @@ public class IntentionInspectingUserState implements UserState{
     @Override
     public void intentionEditing() {
         controller.setCurrentUserState(controller.getIntentionEditingUserState());
+        notifyObserver();
+
     }
 
     @Override
     public void mainMenu() {
         controller.setCurrentUserState(controller.getMainMenuUserState());
+        notifyObserver();
+
+    }
+
+    @Override
+    public void intentionCreation()
+    {
+        throw new UserStateException("Cannot change state from intentionInspecting to intentionCreation");
     }
 }

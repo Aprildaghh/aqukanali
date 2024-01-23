@@ -3,23 +3,24 @@ package Model;
 import Exceptions.EmptyIntentionStringException;
 import Exceptions.NullIntentionException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Intention {
 
-    private Date intentionDate;
+    private LocalDate intentionDate;
     private List<String> intentionList;
     private List<Boolean> intentionMarkList;
 
-    public Intention(Date date)
+    public Intention(LocalDate date)
     {
         intentionDate = date;
         this.intentionList = new ArrayList<>();
     }
 
-    public Intention(Date date, List<String> intentions, List<Boolean> intentionMarkList)
+    public Intention(LocalDate date, List<String> intentions, List<Boolean> intentionMarkList)
     {
         intentionDate = date;
         this.intentionList = new ArrayList<>();
@@ -63,5 +64,10 @@ public class Intention {
 
     public List<String> getIntentionList() { return List.copyOf(intentionList);}
     public List<Boolean> getIntentionMarkList() { return List.copyOf(intentionMarkList);}
-    public Date getDate() { return intentionDate; }
+    public LocalDate getDate() { return intentionDate; }
+    public Intention copy()
+    {
+        Intention newIntention = new Intention(intentionDate, intentionList, intentionMarkList);
+        return newIntention;
+    }
 }

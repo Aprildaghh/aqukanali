@@ -3,11 +3,12 @@ package Model.UserStates;
 import Controller.MainController;
 import Exceptions.UserStateException;
 
-public class GoodbyeUserState implements UserState{
+public class GoodbyeUserState extends UserStateSubject implements UserState {
 
     private final MainController controller;
 
     public GoodbyeUserState(MainController mc){
+        super(mc);
         controller = mc;
     }
 
@@ -29,5 +30,10 @@ public class GoodbyeUserState implements UserState{
     @Override
     public void mainMenu() {
         throw new UserStateException("Cannot change state from goodbye to mainMenu");
+    }
+
+    @Override
+    public void intentionCreation() {
+        throw new UserStateException("Cannot change state from goodbye to intentionCreation");
     }
 }

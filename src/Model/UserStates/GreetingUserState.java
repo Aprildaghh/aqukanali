@@ -3,12 +3,13 @@ package Model.UserStates;
 import Controller.MainController;
 import Exceptions.UserStateException;
 
-public class GreetingUserState implements UserState{
+public class GreetingUserState extends UserStateSubject implements UserState{
 
     private final MainController controller;
 
     public GreetingUserState(MainController mc)
     {
+        super(mc);
         this.controller = mc;
     }
 
@@ -30,5 +31,11 @@ public class GreetingUserState implements UserState{
     @Override
     public void mainMenu() {
         controller.setCurrentUserState(controller.getMainMenuUserState());
+        notifyObserver();
+    }
+
+    @Override
+    public void intentionCreation() {
+        throw new UserStateException("Cannot change state from greeting to intentionCreation");
     }
 }
