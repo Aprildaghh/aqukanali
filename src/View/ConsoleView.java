@@ -54,7 +54,7 @@ public class ConsoleView {
 
     public void showSpecificDateAsking()
     {
-        String str = "Enter the date(dd,mm,yyyy):";
+        String str = "Enter the date(dd-mm-yyyy):";
         slowPrint(str);
     }
 

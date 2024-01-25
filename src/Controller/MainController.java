@@ -7,6 +7,8 @@ import View.ConsoleView;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -151,6 +153,37 @@ public class MainController {
     {
         // TODO: get the date from the user
         LocalDate theDate = null;
+        int dd, mm, yyyy;
+
+        while(true)
+        {
+            Scanner myObj = new Scanner(System.in);
+            String[] dateParts = myObj.nextLine().split("-", 3);
+
+            if(dateParts.length != 3)
+            {
+                System.err.println("Given date format is not correct! Ex: dd-mm-yyyy");
+                continue;
+            }
+
+            dd = Integer.parseInt(dateParts[0]);
+            mm = Integer.parseInt(dateParts[1]);
+            yyyy = Integer.parseInt(dateParts[2]);
+
+            if(dd < 1 || dd > 31)
+            {
+                System.err.println("Given day is not possible! It should be between 1 and 31");
+                continue;
+            }
+            else if( mm < 1 || mm > 12)
+            {
+                System.err.println("Given month is not possible! It should be between 1 and 12");
+                continue;
+            }
+
+            theDate = LocalDate.of(yyyy, mm, dd);
+            break;
+        }
 
         // search for intention for the date
         Intention theIntention = null;
@@ -171,13 +204,28 @@ public class MainController {
 
     private void intentionCreation()
     {
-        // TODO: get the string from user
+        // get the intentions from user
+        List<String> intentions = new ArrayList<>();
+        List<Boolean> intentionMarkList = new ArrayList<>();
 
-        // TODO: alter the string to create an intention
+        while(true)
+        {
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
 
+            if(Objects.equals(input, "exit")) break;
+            else if(Objects.equals(input, "help"))
+            {
+                view.showIntentionCreationHelp();
+                continue;
+            }
+
+            intentions.add(input);
+            intentionMarkList.add(false);
+        }
 
         // store the intention to db
-        Intention newIntention = new Intention(null, null, null);
+        Intention newIntention = new Intention(LocalDate.now(), intentions, intentionMarkList);
         try {
             fileReader.addIntention(newIntention);
         } catch (SQLException e) {
@@ -196,13 +244,56 @@ public class MainController {
     private void intentionEditing()
     {
         // create a temp intention as a copy of the already existing intention
-        Intention tempIntention = currentIntention.copy();
+        LocalDate theDate = currentIntention.getDate();
+        List<String> intentionList = currentIntention.getIntentionList();
+        List<Boolean> intentionMarkList = currentIntention.getIntentionMarkList();
 
-        // TODO:get the string from user
+        // get the string from user
+        while(true)
+        {
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
 
-        // TODO:alter the string to alter the intention
+            if(Objects.equals(input, "exit")) break;
+            else if(Objects.equals(input, "help"))
+            {
+                view.showIntentionEditingHelp();
+                continue;
+            }
+
+            int id = 0;
+            for(int i = 0; i < input.length(); i++)
+            {
+                char c = input.charAt(i);
+                if( c == '.')
+                {
+                    input = input.substring(i+2);
+                    break;
+                }
+                id = (id * 10) + (c - '0');
+            }
+
+            id--;
+
+            if(input.equals("DONE"))
+            {
+                intentionMarkList.set(id, true);
+            }
+            else if(id >= intentionList.size())
+            {
+                intentionList.add(input);
+                intentionMarkList.add(false);
+            }
+            else
+            {
+                intentionList.set(id, input);
+            }
+
+        }
+
 
         // update the intention on db
+        Intention tempIntention = new Intention(theDate, intentionList, intentionMarkList);
         try {
             fileReader.updateIntention(tempIntention);
         } catch (SQLException e) {
