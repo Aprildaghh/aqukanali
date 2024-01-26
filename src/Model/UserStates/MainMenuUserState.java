@@ -15,7 +15,7 @@ public class MainMenuUserState extends UserStateSubject implements UserState{
 
     @Override
     public void mainMenu() {
-        throw new UserStateException("Cannot change state from mainMenu to mainMenu");
+        notifyObserver();
     }
 
     @Override

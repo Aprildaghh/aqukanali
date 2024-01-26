@@ -206,7 +206,6 @@ public class MainController {
     {
         // get the intentions from user
         List<String> intentions = new ArrayList<>();
-        List<Boolean> intentionMarkList = new ArrayList<>();
 
         while(true)
         {
@@ -221,11 +220,10 @@ public class MainController {
             }
 
             intentions.add(input);
-            intentionMarkList.add(false);
         }
 
         // store the intention to db
-        Intention newIntention = new Intention(LocalDate.now(), intentions, intentionMarkList);
+        Intention newIntention = new Intention(LocalDate.now(), intentions, null);
         try {
             fileReader.addIntention(newIntention);
         } catch (SQLException e) {
