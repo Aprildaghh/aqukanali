@@ -7,15 +7,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileReader {
+public class LegacyIntentionDAO {
 
-    private static FileReader uniqueInstance;
+    private static LegacyIntentionDAO uniqueInstance;
     private static Connection con;
     private final String username = "root";
     private final String password = "zxcasd45";
     private final String scheme = "aqukanali";
 
-    private FileReader()
+    private LegacyIntentionDAO()
     {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -26,10 +26,10 @@ public class FileReader {
         }
     }
 
-    public static FileReader getInstance() {
+    public static LegacyIntentionDAO getInstance() {
         if(uniqueInstance == null)
         {
-            uniqueInstance = new FileReader();
+            uniqueInstance = new LegacyIntentionDAO();
         }
         return uniqueInstance;
     }
@@ -56,21 +56,25 @@ public class FileReader {
 
     public Intention getIntentionByDate(LocalDate date) throws SQLException {
         Intention intention = null;
-        String theDate = String.valueOf(date.getYear() + '-' + date.getMonthValue() + '-' + date.getDayOfMonth());
+        String theDate = String.valueOf(date.getYear()) + '-' + String.valueOf((date.getMonthValue() < 10 ? ("0" + String.valueOf(date.getMonthValue())) : String.valueOf(date.getMonthValue()))) + '-' + String.valueOf(date.getDayOfMonth());
+        System.out.println(theDate);
         String sql = "select intentioncontent.isCompleted as state, intentioncontent.IntentionContent as content from intentioncontent where intentioncontent.IntentionId = (select intention.IntentionId from intention where intention.thedate = date('"+theDate+"'));";
         Statement stmt = null;
         ResultSet rs = null;
         stmt = con.createStatement();
         rs = stmt.executeQuery(sql);
+
         List<String> intentions = new ArrayList<>();
         List<Boolean> completions = new ArrayList<>();
         boolean stillGoin = true;
 
+        // TODO: rs.next() is causing a problem or rs.absolute()
         for(int i = 0; stillGoin; i++)
         {
             intentions.add(rs.getString(1));
             completions.add(rs.getBoolean(0));
-            stillGoin = rs.next();
+            if(!rs.next()) break;
+            stillGoin = rs.absolute(i+1);
         }
 
         return new Intention(date, intentions, completions);

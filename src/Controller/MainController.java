@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.FileReader;
+import Dao.LegacyIntentionDAO;
 import Model.Intention;
 import Model.UserStates.*;
 import View.ConsoleView;
@@ -17,7 +17,7 @@ import static java.lang.System.exit;
 public class MainController {
 
     private final ConsoleView view;
-    private final FileReader fileReader;
+    private final LegacyIntentionDAO intentionDAO;
     private Intention currentIntention;
 
     private UserState currentUserState;
@@ -31,7 +31,7 @@ public class MainController {
     public MainController()
     {
         this.view = ConsoleView.getInstance();
-        this.fileReader = FileReader.getInstance();
+        this.intentionDAO = LegacyIntentionDAO.getInstance();
         this.goodbyeUserState = new GoodbyeUserState(this);
         this.greetingUserState = new GreetingUserState(this);
         this.intentionEditingUserState = new IntentionEditingUserState(this);
@@ -118,7 +118,7 @@ public class MainController {
 
                 currentIntention = null;
                 try {
-                    currentIntention = fileReader.getIntentionByDate(LocalDate.now());
+                    currentIntention = intentionDAO.getIntentionByDate(LocalDate.now());
                 } catch (SQLException e) {
                     System.err.println("Error at start() in MainController.java: Couldn't get data from db.");
                     currentUserState.mainMenu();
@@ -188,7 +188,7 @@ public class MainController {
         // search for intention for the date
         Intention theIntention = null;
         try {
-            theIntention = fileReader.getIntentionByDate(theDate);
+            theIntention = intentionDAO.getIntentionByDate(theDate);
         } catch (SQLException e) {
             System.err.println("Error at getDate() in MainController.java: Intention couldn't found in db.");
             currentUserState.mainMenu();
@@ -225,7 +225,7 @@ public class MainController {
         // store the intention to db
         Intention newIntention = new Intention(LocalDate.now(), intentions, null);
         try {
-            fileReader.addIntention(newIntention);
+            intentionDAO.addIntention(newIntention);
         } catch (SQLException e) {
             System.err.println("Error at intentionCreation() in MainController.java: Couldn't save intention to the db.");
             currentUserState.mainMenu();
@@ -293,7 +293,7 @@ public class MainController {
         // update the intention on db
         Intention tempIntention = new Intention(theDate, intentionList, intentionMarkList);
         try {
-            fileReader.updateIntention(tempIntention);
+            intentionDAO.updateIntention(tempIntention);
         } catch (SQLException e) {
             System.err.println("Error at intentionEditing() in MainController.java: Couldn't update the intention on db.");
         }

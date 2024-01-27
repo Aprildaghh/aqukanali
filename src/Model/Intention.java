@@ -65,9 +65,13 @@ public class Intention {
     public List<String> getIntentionList() { return List.copyOf(intentionList);}
     public List<Boolean> getIntentionMarkList() { return List.copyOf(intentionMarkList);}
     public LocalDate getDate() { return intentionDate; }
-    public Intention copy()
-    {
-        Intention newIntention = new Intention(intentionDate, intentionList, intentionMarkList);
-        return newIntention;
+
+    @Override
+    public String toString() {
+        return "Intention{" +
+                "intentionDate=" + intentionDate +
+                ", intentionList=" + intentionList +
+                ", intentionMarkList=" + intentionMarkList +
+                '}';
     }
 }

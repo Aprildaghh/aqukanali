@@ -21,6 +21,11 @@ public class ConsoleView {
 
     private void slowPrint(String s)
     {
+        try {
+            TimeUnit.MICROSECONDS.sleep(30000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         for(int i = 0; i < s.length(); i++)
         {
             System.out.print(s.charAt(i));
