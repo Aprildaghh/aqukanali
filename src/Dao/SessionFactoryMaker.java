@@ -1,13 +1,12 @@
 package Dao;
 
-import Entity.IntentionContentEntity;
-import Entity.IntentionEntity;
+import Model.Entity.ContentEntity;
+import Model.Entity.IntentionEntity;
 import org.hibernate.SessionFactory;
 
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 import java.util.HashMap;
@@ -26,14 +25,14 @@ public class SessionFactoryMaker {
         settings.put("hibernate.connection.username", "root");
         settings.put("hibernate.connection.password", "zxcasd45");
         settings.put("hibernate.current_session_context_class", "thread");
-        settings.put("hibernate.show_sql", "false");
+        settings.put("hibernate.show_sql", "true");
         settings.put("hibernate.format_sql", "false");
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(settings).build();
 
         MetadataSources metadataSources = new MetadataSources(serviceRegistry);
-        metadataSources.addAnnotatedClass(IntentionContentEntity.class);
+        metadataSources.addAnnotatedClass(ContentEntity.class);
         metadataSources.addAnnotatedClass(IntentionEntity.class);
         Metadata metadata = metadataSources.buildMetadata();
 

@@ -1,14 +1,13 @@
 package Controller;
 
-import Dao.LegacyIntentionDAO;
-import Model.Intention;
+import Dao.IntentionDAO;
+import Model.Entity.ContentEntity;
+import Model.Entity.IntentionEntity;
 import Model.UserStates.*;
 import View.ConsoleView;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -17,8 +16,8 @@ import static java.lang.System.exit;
 public class MainController {
 
     private final ConsoleView view;
-    private final LegacyIntentionDAO intentionDAO;
-    private Intention currentIntention;
+    private final IntentionDAO intentionDAO;
+    private IntentionEntity currentIntention;
 
     private UserState currentUserState;
     private final UserState goodbyeUserState;
@@ -31,7 +30,7 @@ public class MainController {
     public MainController()
     {
         this.view = ConsoleView.getInstance();
-        this.intentionDAO = LegacyIntentionDAO.getInstance();
+        this.intentionDAO = IntentionDAO.getInstance();
         this.goodbyeUserState = new GoodbyeUserState(this);
         this.greetingUserState = new GreetingUserState(this);
         this.intentionEditingUserState = new IntentionEditingUserState(this);
@@ -115,15 +114,8 @@ public class MainController {
                 currentUserState.mainMenu();
             else if(Objects.equals(input, "1")&& currentUserState.equals(mainMenuUserState))
             {
+                currentIntention = intentionDAO.getIntentionByDate(LocalDate.now());
 
-                currentIntention = null;
-                try {
-                    currentIntention = intentionDAO.getIntentionByDate(LocalDate.now());
-                } catch (SQLException e) {
-                    System.err.println("Error at start() in MainController.java: Couldn't get data from db.");
-                    currentUserState.mainMenu();
-                    continue;
-                }
                 if(currentIntention == null)
                     currentUserState.intentionCreation();
                 else
@@ -151,7 +143,7 @@ public class MainController {
 
     private void getDate()
     {
-        // TODO: get the date from the user
+        // get the date from the user
         LocalDate theDate = null;
         int dd, mm, yyyy;
 
@@ -185,18 +177,8 @@ public class MainController {
             break;
         }
 
-        // search for intention for the date
-        Intention theIntention = null;
-        try {
-            theIntention = intentionDAO.getIntentionByDate(theDate);
-        } catch (SQLException e) {
-            System.err.println("Error at getDate() in MainController.java: Intention couldn't found in db.");
-            currentUserState.mainMenu();
-            return;
-        }
-
-        // set currentIntention to that intention
-        currentIntention = theIntention;
+        // search for intention for the date and set currentIntention to that intention
+        currentIntention = intentionDAO.getIntentionByDate(theDate);
 
         // change state to intentionInspectingUserState
         currentUserState.intentionInspecting();
@@ -205,7 +187,8 @@ public class MainController {
     private void intentionCreation()
     {
         // get the intentions from user
-        List<String> intentions = new ArrayList<>();
+        IntentionEntity newIntention = new IntentionEntity(java.sql.Date.valueOf(LocalDate.now()));
+        newIntention.setId(0);
 
         while(true)
         {
@@ -219,18 +202,11 @@ public class MainController {
                 continue;
             }
 
-            intentions.add(input);
+            newIntention.add(new ContentEntity(false, input, newIntention));
         }
 
         // store the intention to db
-        Intention newIntention = new Intention(LocalDate.now(), intentions, null);
-        try {
-            intentionDAO.addIntention(newIntention);
-        } catch (SQLException e) {
-            System.err.println("Error at intentionCreation() in MainController.java: Couldn't save intention to the db.");
-            currentUserState.mainMenu();
-            return;
-        }
+        intentionDAO.addOrUpdateIntention(newIntention);
 
         // set the currentIntention to the new intention
         currentIntention = newIntention;
@@ -241,10 +217,6 @@ public class MainController {
 
     private void intentionEditing()
     {
-        // create a temp intention as a copy of the already existing intention
-        LocalDate theDate = currentIntention.getDate();
-        List<String> intentionList = currentIntention.getIntentionList();
-        List<Boolean> intentionMarkList = currentIntention.getIntentionMarkList();
 
         // get the string from user
         while(true)
@@ -275,31 +247,22 @@ public class MainController {
 
             if(input.equals("DONE"))
             {
-                intentionMarkList.set(id, true);
+                currentIntention.getContents().get(id).setContentCompletion(true);
             }
-            else if(id >= intentionList.size())
+            else if(id >= currentIntention.getContents().size())
             {
-                intentionList.add(input);
-                intentionMarkList.add(false);
+                currentIntention.add(new ContentEntity(false, input, currentIntention));
             }
             else
             {
-                intentionList.set(id, input);
+                currentIntention.getContents().get(id).setIntentionContent(input);
             }
 
         }
 
 
         // update the intention on db
-        Intention tempIntention = new Intention(theDate, intentionList, intentionMarkList);
-        try {
-            intentionDAO.updateIntention(tempIntention);
-        } catch (SQLException e) {
-            System.err.println("Error at intentionEditing() in MainController.java: Couldn't update the intention on db.");
-        }
-
-        // set the currentIntention to the new intention
-        currentIntention = tempIntention;
+        intentionDAO.addOrUpdateIntention(currentIntention);
 
         // get main screen state
         currentUserState.mainMenu();

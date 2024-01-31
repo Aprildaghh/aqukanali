@@ -2,8 +2,10 @@ package View;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import Model.Entity.ContentEntity;
+import Model.Entity.IntentionEntity;
 import Exceptions.NullIntentionException;
-import Model.Intention;
 
 public class ConsoleView {
 
@@ -38,18 +40,18 @@ public class ConsoleView {
         System.out.print('\n');
     }
 
-    public void showExistingIntention(Intention intention)
+    public void showExistingIntention(IntentionEntity intention)
     {
         if(intention == null)
             throw new NullIntentionException("Given intention is null!");
 
-        List<String> intentionList = intention.getIntentionList();
-        List<Boolean> intentionMarkList = intention.getIntentionMarkList();
-        String str = intention.getDate().toString() + "\n";
+        List<ContentEntity> contents = intention.getContents();
+        String str = intention.getIntentionDate().toString() + "\n";
 
-        for(int i = 0; i < intentionList.size(); i++)
+        for(int i = 0; i < contents.size(); i++)
         {
-            str += (i+1) + ". " + ((intentionMarkList.get(i) ? "(DONE) " : "(NOT COMPLETED) ")) + intentionList.get(i) + "\n";
+            ContentEntity content = contents.get(i);
+            str += (i+1) + ". " + ((content.isContentCompletion() ? "(DONE) " : "(NOT COMPLETED) ")) + content.getIntentionContent() + "\n";
         }
 
         str += "\nType 'e' for edit, 'm' for returning to main menu.\n";

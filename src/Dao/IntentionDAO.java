@@ -1,17 +1,13 @@
 package Dao;
 
-import Entity.IntentionContentEntity;
-import Model.Intention;
-import jakarta.persistence.Entity;
+import Model.Entity.IntentionEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
 
 public class IntentionDAO {
 
@@ -31,53 +27,33 @@ public class IntentionDAO {
         return uniqueInstance;
     }
 
-    public void addIntention(Intention intention) throws SQLException {
-
-    }
-
-    public Intention getIntentionByDate(LocalDate date) throws SQLException {
+    public void addOrUpdateIntention(IntentionEntity intention) {
 
         Session session = sessionFactory.getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        String theDate = String.valueOf(date.getYear()) + '-' + String.valueOf((date.getMonthValue() < 10 ? ("0" + String.valueOf(date.getMonthValue())) : String.valueOf(date.getMonthValue()))) + '-' + String.valueOf(date.getDayOfMonth());
-        Query<Map> query = session.createQuery(
-                "select ic.isCompleted as state, ic.intentionContent as content from IntentionContentEntity ic where ic.intentionId = (select i.intentionId from IntentionEntity i where i.theDate = date('"+theDate+"'))"
-                , Map.class);
 
-        List<Map> theIntentionContent = query.getResultList();
-
+        session.persist(intention);
 
         transaction.commit();
 
-        List<String> intentions = new ArrayList<>();
-        List<Boolean> completions = new ArrayList<>();
-
-
-        for(int i = 0; i < theIntentionContent.size(); i++)
-        {
-            HashMap<Boolean, String> hashMap = (HashMap<Boolean, String>) theIntentionContent.get(i);
-            Set<Boolean> set = hashMap.keySet();
-
-            intentions.add(hashMap.get(i));
-            // completions.add(set.)
-        }
-
-        return new Intention(date, intentions, completions);
     }
 
-    public void updateIntention(Intention intention) throws SQLException {
+    public IntentionEntity getIntentionByDate(LocalDate date) {
 
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query<IntentionEntity> query = session.createQuery(
+                "select id, intentionDate from IntentionEntity where intentionDate = :theDate"
+                , IntentionEntity.class);
+
+        query.setParameter("theDate", java.sql.Date.valueOf(date));
+
+
+        IntentionEntity theIntention = query.getSingleResult();
+
+        transaction.commit();
+
+        return theIntention;
     }
 }
-
-
-/*
-
-		// execute query and get result list
-		List<Customer> result = query.getResultList();
-
-		// return the results
-		return result;
-	}
-
- */
