@@ -33,6 +33,7 @@ public class IntentionDAO {
         Session session = sessionFactory.getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
+        // save intention to db
         Query intentionQuery = session.createQuery(
                     """
                             insert into IntentionEntity(intentionDate)
@@ -41,21 +42,21 @@ public class IntentionDAO {
                     .setParameter("intentionDate", intention.getIntentionDate());
         intentionQuery.executeUpdate();
 
+        // get intention id from db
+        Query<IntentionEntity> intentionEntityQuery = session.createQuery(
+                        "select id, intentionDate from IntentionEntity where intentionDate = :theDate"
+                        , IntentionEntity.class)
+                .setParameter("theDate", intention.getIntentionDate());
+        IntentionEntity theIntention = intentionEntityQuery.getSingleResultOrNull();
+        intention.setId(theIntention.getId());
 
-        /*
+        // save contents to db
         List<ContentEntity> contents = intention.getContents();
         for (ContentEntity content :
                 contents) {
-            Query contentQuery = session.createQuery(
-                            """
-                                    insert into ContentEntity ( contentCompletion , intentionContent , intention )
-                                    values (false, :content, :intention )
-                                    """)
-                    .setParameter("content", content.getIntentionContent())
-                    .setParameter("intention", intention.getId());
-            contentQuery.executeUpdate();
+            session.saveOrUpdate(content);
         }
-        */
+
 
 
         transaction.commit();

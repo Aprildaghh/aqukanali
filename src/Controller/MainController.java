@@ -8,6 +8,8 @@ import View.ConsoleView;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -198,6 +200,7 @@ public class MainController {
         IntentionEntity newIntention = new IntentionEntity(java.sql.Date.valueOf(LocalDate.now()));
         newIntention.setId(0);
 
+        List<ContentEntity> contents = new ArrayList<>();
         while(true)
         {
             Scanner scanner = new Scanner(System.in);
@@ -210,8 +213,10 @@ public class MainController {
                 continue;
             }
 
-            newIntention.add(new ContentEntity(false, input, newIntention));
+            ContentEntity content = new ContentEntity(false, input, newIntention);
+            contents.add(content);
         }
+        newIntention.setContents(contents);
 
         // store the intention to db
         intentionDAO.addIntention(newIntention);

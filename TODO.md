@@ -1,1 +1,0 @@
-1. FIX addIntention() in IntentionDAO class
