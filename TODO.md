@@ -1,1 +1,1 @@
-1. FIX getIntentionByDate()
+1. FIX addIntention() in IntentionDAO class

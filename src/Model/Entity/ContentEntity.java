@@ -9,16 +9,15 @@ public class ContentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="content_completion")
-    private boolean contentCompletion;
+    private Boolean contentCompletion;
 
     @Column(name="intention_content")
     private String intentionContent;
 
-    @ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(cascade={ CascadeType.ALL })
     @JoinColumn(name="intention_id")
     private IntentionEntity intention;
 
@@ -26,32 +25,38 @@ public class ContentEntity {
     public ContentEntity() {
     }
 
-    public ContentEntity(boolean contentCompletion, String intentionContent, IntentionEntity intention) {
+    public ContentEntity(Boolean contentCompletion, String intentionContent, IntentionEntity intention) {
         this.contentCompletion = contentCompletion;
         this.intentionContent = intentionContent;
         this.intention = intention;
     }
 
-    public ContentEntity(int id, boolean contentCompletion, String intentionContent, IntentionEntity intention) {
+    public ContentEntity(Integer id, Boolean contentCompletion, String intentionContent, IntentionEntity intention) {
         this.id = id;
         this.contentCompletion = contentCompletion;
         this.intentionContent = intentionContent;
         this.intention = intention;
     }
 
-    public int getId() {
+    public ContentEntity(Integer id, Boolean contentCompletion, String intentionContent) {
+        this.id = id;
+        this.contentCompletion = contentCompletion;
+        this.intentionContent = intentionContent;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public boolean isContentCompletion() {
+    public Boolean isContentCompletion() {
         return contentCompletion;
     }
 
-    public void setContentCompletion(boolean contentCompletion) {
+    public void setContentCompletion(Boolean contentCompletion) {
         this.contentCompletion = contentCompletion;
     }
 
@@ -69,5 +74,14 @@ public class ContentEntity {
 
     public void setIntention(IntentionEntity intention) {
         this.intention = intention;
+    }
+
+    @Override
+    public String toString() {
+        return "ContentEntity{" +
+                "id=" + id +
+                ", contentCompletion=" + contentCompletion +
+                ", intentionContent='" + intentionContent + '\'' +
+                '}';
     }
 }

@@ -80,8 +80,16 @@ public class MainController {
             if(currentIntention == null)
             {
                 System.err.println("Error at showScreen(Intention) in MainController.java: Given intention is null.");
+                currentUserState.mainMenu();
                 return;
             }
+            else if (currentIntention.getContents() == null)
+            {
+                System.err.println("Error at showScreen(Intention) in MainController.java: Given intention's contents are null");
+                currentUserState.mainMenu();
+                return;
+            }
+
             view.showExistingIntention(currentIntention);
         }
         else if(currentUserState.equals(intentionEditingUserState))
@@ -206,7 +214,7 @@ public class MainController {
         }
 
         // store the intention to db
-        intentionDAO.addOrUpdateIntention(newIntention);
+        intentionDAO.addIntention(newIntention);
 
         // set the currentIntention to the new intention
         currentIntention = newIntention;
@@ -262,7 +270,7 @@ public class MainController {
 
 
         // update the intention on db
-        intentionDAO.addOrUpdateIntention(currentIntention);
+        intentionDAO.updateIntention(currentIntention);
 
         // get main screen state
         currentUserState.mainMenu();

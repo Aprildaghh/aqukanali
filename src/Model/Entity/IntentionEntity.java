@@ -14,20 +14,16 @@ public class IntentionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="intention_date")
     private Date intentionDate;
 
-    @OneToMany(mappedBy = "intention",
-                cascade={CascadeType.PERSIST, CascadeType.MERGE,
-                CascadeType.DETACH, CascadeType.REFRESH})
-    private List<ContentEntity> contents;
+    @OneToMany(mappedBy = "intention", cascade={ CascadeType.ALL })
+    private List<ContentEntity> contents = new ArrayList<ContentEntity>();
 
     public void add(ContentEntity content)
     {
-        if(contents == null) contents = new ArrayList<ContentEntity>();
-
         contents.add(content);
         content.setIntention(this);
     }
@@ -44,7 +40,7 @@ public class IntentionEntity {
         this.contents = contents;
     }
 
-    public IntentionEntity(int id, Date intentionDate) {
+    public IntentionEntity(Integer id, Date intentionDate) {
         this.id = id;
         this.intentionDate = intentionDate;
     }
@@ -77,5 +73,14 @@ public class IntentionEntity {
 
     public void setContents(List<ContentEntity> contents) {
         this.contents = contents;
+    }
+
+    @Override
+    public String toString() {
+        return "IntentionEntity{" +
+                "id=" + id +
+                ", intentionDate=" + intentionDate +
+                ", contents=" + contents +
+                '}';
     }
 }
